@@ -10,7 +10,7 @@ public class Projectile : MonoBehaviour
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-        rigidBody.velocity = transform.forward * speed;
+        rigidBody.linearVelocity = transform.forward * speed;
     }
 
     public void DestroyProjectile()

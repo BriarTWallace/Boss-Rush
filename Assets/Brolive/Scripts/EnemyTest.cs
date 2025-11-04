@@ -62,7 +62,7 @@ namespace brolive
 
         private void FixedUpdate()
         {
-            _rigidbody.velocity = targetVelocity;
+            _rigidbody.linearVelocity = targetVelocity;
         }
 
         void UpdateIdle()
@@ -136,7 +136,7 @@ namespace brolive
             }
 
             targetVelocity = _transform.forward * speed;
-            targetVelocity.y = _rigidbody.velocity.y;
+            targetVelocity.y = _rigidbody.linearVelocity.y;
 
             if (currentStateElapsed > 1) // rebuild path every half second
             {

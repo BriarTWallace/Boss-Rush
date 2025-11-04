@@ -24,6 +24,6 @@ public class Actor : MonoBehaviour
     {
         rigidBody.AddForce(knockback * 10, ForceMode.Impulse);
         yield return new WaitForSeconds(0.5f);
-        rigidBody.velocity = Vector3.zero;
+        rigidBody.linearVelocity = Vector3.zero;
     }
 }
