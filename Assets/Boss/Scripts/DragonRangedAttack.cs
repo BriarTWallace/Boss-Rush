@@ -1,19 +1,21 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 namespace nightmareBW
 {
     public class DragonRangedAttack : MonoBehaviour
     {
+        [Header("References")]
         public Animator animator;
         public Transform firePoint;
         public GameObject fireballPrefab;
 
+        [Header("Ranged Settings")]
         public float cooldown = 4f;
         public float castRange = 20f;
 
         public float spawnDelay = 0.6f;
-        public float endDelay = 1.2f;
+        public float endDelay = 0.6f;
 
         Transform player;
         bool isOnCooldown;
@@ -25,6 +27,14 @@ namespace nightmareBW
             if (p != null)
             {
                 player = p.transform;
+            }
+            else
+            {
+                PlayerLogic pl = FindObjectOfType<PlayerLogic>();
+                if (pl != null)
+                {
+                    player = pl.transform;
+                }
             }
         }
 
@@ -44,13 +54,17 @@ namespace nightmareBW
             isAttacking = true;
             isOnCooldown = true;
 
-            animator.SetTrigger("RangedAttack");
+            if (animator != null)
+            {
+                animator.SetTrigger("RangedAttack");
+            }
 
             StartCoroutine(RangedRoutine());
         }
 
         IEnumerator RangedRoutine()
         {
+
             yield return new WaitForSeconds(spawnDelay);
 
             SpawnFireball();
