@@ -111,7 +111,6 @@ GameObject:
   - component: {fileID: 871199890347550522}
   - component: {fileID: 1628742975853220296}
   - component: {fileID: 4810624154960316906}
-  - component: {fileID: 8194880713905195178}
   m_Layer: 7
   m_Name: Nightmare
   m_TagString: Boss
@@ -274,22 +273,24 @@ MonoBehaviour:
   rangedAttack: {fileID: 655441022622790248}
   meleePoint: {fileID: 2494734752257648271}
   meleeRadius: 2
-  meleeDamage: 1
+  meleeDamage: 0
   meleeKnockback: 2
   basicMeleeHitDelay: 0.8
   clawMeleeHitDelay: 1.65
   meleePostAttackLock: 0.2
   meleeCooldown: 2
   aoePoint: {fileID: 7326432163857658584}
-  aoeRadius: 5
-  aoeDamage: 2
+  aoeRadius: 7
+  aoeDamage: 0
   aoeKnockback: 3
-  aoeHitDelay: 0.6
+  aoeHitDelay: 1.2
   aoePostAttackLock: 0.25
   aoeCooldown: 3
   rangedPostAttackLock: 0.2
   rangedCooldown: 2.5
-  referenceMoveSpeed: 3
+  phase1DelayMultiplier: 1
+  phase2DelayMultiplier: 1.2
+  phase3DelayMultiplier: 1.4
 --- !u!114 &4810624154960316906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,47 +319,7 @@ MonoBehaviour:
   enablePunish: 1
   punishDistance: 1.5
   punishCloseTime: 2
---- !u!114 &8194880713905195178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1363138232190811531}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb936639cdd91de4b9956f37ee2ea8e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 0
-  iTime: 0.5
-  flashMaterial: {fileID: 0}
-  renderers: []
-  damageEffectPrefab: {fileID: 0}
-  hurtSounds: {fileID: 0}
-  deathSounds: {fileID: 0}
-  OnInitialize:
-    m_PersistentCalls:
-      m_Calls: []
-  OnHit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 4810624154960316906}
-        m_TargetAssemblyTypeName: nightmareBW.DragonBossBrain, Assembly-CSharp
-        m_MethodName: HandleHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &1634632649492671548
@@ -1392,8 +1353,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4.724908, y: 4.474449, z: 4.773488}
-  m_Center: {x: 0.07069421, y: 1.7372246, z: -0.2783265}
+  m_Size: {x: 3.636185, y: 2.2790546, z: 4.4738474}
+  m_Center: {x: -0.17264819, y: 1.9671972, z: -0.42814708}
 --- !u!1 &5558473443155495604
 GameObject:
   m_ObjectHideFlags: 0

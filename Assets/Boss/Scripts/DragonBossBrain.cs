@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace nightmareBW
 {
@@ -54,6 +55,9 @@ namespace nightmareBW
         public bool enablePunish = true;
         public float punishDistance = 1.5f;
         public float punishCloseTime = 2f;
+
+        [Header("Events")]
+        public UnityEvent OnDeath;
 
         float closeTimer;
 
@@ -219,8 +223,19 @@ namespace nightmareBW
                 attack.enabled = false;
             }
 
+            if (OnDeath != null)
+            {
+                OnDeath.Invoke();
+            }
+
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.GoToNextLevel();
+            }
+
             enabled = false;
         }
+
 
         void SetPhaseIndex(int index)
         {

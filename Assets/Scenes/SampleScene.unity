@@ -1258,7 +1258,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
   m_PrefabInstance: {fileID: 3641499709683160272}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 3641499709683160273}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62089466e9661844aa02b827f033bbd9, type: 3}
@@ -2242,54 +2242,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1888218173}
   m_CullTransparentMesh: 1
---- !u!1 &1906588245 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5382387566596695826, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-  m_PrefabInstance: {fileID: 3641499709683160272}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1906588248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1906588245}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb936639cdd91de4b9956f37ee2ea8e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 0
-  iTime: 0.5
-  flashMaterial: {fileID: 0}
-  renderers: []
-  damageEffectPrefab: {fileID: 0}
-  hurtSounds: {fileID: 0}
-  deathSounds: {fileID: 0}
-  OnInitialize:
-    m_PersistentCalls:
-      m_Calls: []
-  OnHit:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 929689773}
-        m_TargetAssemblyTypeName: nightmareBW.DragonBossBrain, Assembly-CSharp
-        m_MethodName: HandleHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnDeath:
-    m_PersistentCalls:
-      m_Calls: []
-  OnHealthChanged:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &2062980623
 GameObject:
   m_ObjectHideFlags: 0
@@ -2692,66 +2644,106 @@ PrefabInstance:
       propertyPath: m_Name
       value: Nightmare
       objectReference: {fileID: 0}
-    - target: {fileID: 1628742975853220296, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: aoeDamage
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1628742975853220296, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: aoeRadius
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 1628742975853220296, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: aoeHitDelay
-      value: 1.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1628742975853220296, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: meleeDamage
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
       propertyPath: bossHealthBar
       value: 
       objectReference: {fileID: 1747053146}
-    - target: {fileID: 5326669733194780414, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: m_Size.x
-      value: 3.636185
-      objectReference: {fileID: 0}
-    - target: {fileID: 5326669733194780414, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: m_Size.y
-      value: 2.2790546
-      objectReference: {fileID: 0}
-    - target: {fileID: 5326669733194780414, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: m_Size.z
-      value: 4.4738474
-      objectReference: {fileID: 0}
-    - target: {fileID: 5326669733194780414, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: m_Center.x
-      value: -0.17264819
-      objectReference: {fileID: 0}
-    - target: {fileID: 5326669733194780414, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: m_Center.y
-      value: 1.9671972
-      objectReference: {fileID: 0}
-    - target: {fileID: 5326669733194780414, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: m_Center.z
-      value: -0.42814708
-      objectReference: {fileID: 0}
-    - target: {fileID: 5326669733194780414, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
-      propertyPath: m_IsTrigger
+    - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.size
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1378800224}
+    - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GoToNextLevel
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4810624154960316906, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8194880713905195178, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8194880713905195178, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8194880713905195178, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+      propertyPath: OnDeath.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1378800224}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5382387566596695826, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 1363138232190811531, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1906588248}
+      addedObject: {fileID: 3641499709683160274}
   m_SourcePrefab: {fileID: 100100000, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+--- !u!1 &3641499709683160273 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1363138232190811531, guid: 94af1f2762424dc458b4b8252adfa626, type: 3}
+  m_PrefabInstance: {fileID: 3641499709683160272}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3641499709683160274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3641499709683160273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb936639cdd91de4b9956f37ee2ea8e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 0
+  iTime: 0.5
+  flashMaterial: {fileID: 0}
+  renderers: []
+  damageEffectPrefab: {fileID: 0}
+  hurtSounds: {fileID: 0}
+  deathSounds: {fileID: 0}
+  OnInitialize:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 929689773}
+        m_TargetAssemblyTypeName: nightmareBW.DragonBossBrain, Assembly-CSharp
+        m_MethodName: HandleHit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &3964861594565656507
 PrefabInstance:
   m_ObjectHideFlags: 0
