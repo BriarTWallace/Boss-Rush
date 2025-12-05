@@ -6,11 +6,9 @@ namespace nightmareBW
     {
         [Header("Projectile Settings")]
         public float speed = 15f;
-        public float damage = 20f;
+        public int damageAmount = 3;
+        public float knockbackForce = 2f;
         public float lifeTime = 5f;
-
-        [Header("Explosion Settings")]
-        public float explosionRadius = 0f;
 
         Vector3 moveDirection;
         bool initialized;
@@ -34,35 +32,23 @@ namespace nightmareBW
             if (other.gameObject.CompareTag("Boss"))
                 return;
 
-            if (explosionRadius > 0f)
+            Damageable damageable = other.GetComponent<Damageable>();
+            if (damageable != null)
             {
-                DoExplosion();
-            }
-            else
-            {
-                TryDamage(other);
+                Vector3 dir = other.transform.position - transform.position;
+                dir.Normalize();
+
+                Damage damage = new Damage();
+                damage.amount = damageAmount;
+                damage.direction = dir;
+                damage.knockbackForce = knockbackForce;
+
+                damageable.Hit(damage);
             }
 
             Destroy(gameObject);
         }
-
-        void DoExplosion()
-        {
-            Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius);
-            foreach (Collider hit in hits)
-            {
-                TryDamage(hit);
-            }
-        }
-
-        void TryDamage(Collider col)
-        {
-            /*var health = col.GetComponent<Health>();
-            if (health != null)
-            {
-                health.TakeDamage(damage);
-            }*/
-        }
     }
 }
+
 

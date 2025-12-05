@@ -49,6 +49,25 @@ namespace nightmareBW
         [SerializeField] float pathRebuildInterval = 1f;
         [SerializeField] float rotationSpeed = 5f;
 
+        [Header("Strafing")]
+        public float strafeSpeedMultiplier = 0.6f;
+        public float strafeDuration = 1.2f;
+        public float strafeCooldown = 1.5f;
+        public float preStrafeBackDuration = 1.5f;
+
+        enum StrafeDirection
+        {
+            None,
+            Left,
+            Right,
+            Back
+        }
+
+        StrafeDirection currentStrafeDirection = StrafeDirection.None;
+        StrafeDirection queuedStrafeDirection = StrafeDirection.None;
+        float strafeTimer;
+        float strafeCooldownTimer;
+
         [Header("Health")]
         public float maxHealth = 100f;
         public float currentHealth = 100f;
@@ -61,6 +80,21 @@ namespace nightmareBW
         [Header("Ranges")]
         public float meleeRange = 3f;
         public float preferredRange = 8f;
+
+        [Header("Damage / Sensors")]
+        public LayerMask playerLayer;
+        public Transform meleePoint;
+        public float meleeRadius = 2f;
+        public int meleeDamage = 1;
+        public float meleeKnockback = 2f;
+        public float basicMeleeHitDelay = 0.75f;
+        public float clawMeleeHitDelay = 1.55f;
+
+        public Transform aoePoint;
+        public float aoeRadius = 4f;
+        public int aoeDamage = 2;
+        public float aoeKnockback = 3f;
+        public float aoeHitDelay = 0.5f;
 
         [Header("Defensive / Punish")]
         public float punishDistance = 1.5f;
@@ -146,6 +180,7 @@ namespace nightmareBW
                 currentState.Tick();
             }
 
+            UpdateStrafeTimers();
             UpdateAnimatorSpeed();
         }
 
@@ -209,7 +244,6 @@ namespace nightmareBW
             SwitchState(previousState, false);
         }
 
-        // Animator phase helper
         public void SetPhaseIndex(int index)
         {
             if (animator != null)
@@ -220,13 +254,15 @@ namespace nightmareBW
 
         public bool IsInAttackAnimation()
         {
+            if (rangedAttack != null && rangedAttack.IsAttacking)
+                return true;
+
             if (animator == null) return false;
 
             AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
 
             return state.IsTag("Attack");
         }
-
 
         // Phase helpers
         public float GetHealthPercent()
@@ -333,6 +369,55 @@ namespace nightmareBW
             return rangedAttack;
         }
 
+        void DoMeleeHit()
+        {
+            if (meleePoint == null) return;
+
+            Collider[] hits = Physics.OverlapSphere(meleePoint.position, meleeRadius, playerLayer);
+            foreach (Collider hit in hits)
+            {
+                Damageable damageable = hit.GetComponentInParent<Damageable>();
+                if (damageable == null) continue;
+
+                Vector3 dir = hit.transform.position - transform.position;
+                dir.Normalize();
+
+                Damage dmg = new Damage();
+                dmg.amount = meleeDamage;
+                dmg.direction = dir;
+                dmg.knockbackForce = meleeKnockback;
+
+                damageable.Hit(dmg);
+
+                break;
+            }
+
+        }
+
+        void DoAoEHit()
+        {
+            if (aoePoint == null) return;
+
+            Collider[] hits = Physics.OverlapSphere(aoePoint.position, aoeRadius, playerLayer);
+            foreach (Collider hit in hits)
+            {
+                Damageable damageable = hit.GetComponentInParent<Damageable>();
+                if (damageable == null) continue;
+
+                Vector3 dir = hit.transform.position - transform.position;
+                dir.Normalize();
+
+                Damage dmg = new Damage();
+                dmg.amount = aoeDamage;
+                dmg.direction = dir;
+                dmg.knockbackForce = aoeKnockback;
+
+                damageable.Hit(dmg);
+
+                break;
+            }
+        }
+
         public bool AttemptMakePathToPlayer()
         {
             if (navigator == null || player == null) return false;
@@ -354,6 +439,47 @@ namespace nightmareBW
                 StopMovement();
                 return;
             }
+
+            if (IsStrafing())
+            {
+                Vector3 toPlayer = player.position - _transform.position;
+                toPlayer.y = 0f;
+
+                if (toPlayer.sqrMagnitude < 0.001f)
+                {
+                    StopMovement();
+                    return;
+                }
+
+                toPlayer.Normalize();
+
+                Vector3 moveDir = Vector3.zero;
+
+                switch (currentStrafeDirection)
+                {
+                    case StrafeDirection.Left:
+                        moveDir = Vector3.Cross(Vector3.up, toPlayer);
+                        break;
+                    case StrafeDirection.Right:
+                        moveDir = Vector3.Cross(toPlayer, Vector3.up);
+                        break;
+                    case StrafeDirection.Back:
+                        moveDir = -toPlayer;
+                        break;
+                }
+
+                moveDir.Normalize();
+
+                targetVelocity = moveDir * speed * strafeSpeedMultiplier;
+
+                if (_rigidbody != null)
+                {
+                    targetVelocity.y = _rigidbody.linearVelocity.y;
+                }
+
+                return;
+            }
+
 
             float distToPlayer = GetDistanceToPlayer();
             if (distToPlayer <= stopDistanceFromPlayer)
@@ -435,6 +561,104 @@ namespace nightmareBW
             }
         }
 
+        public bool IsStrafing()
+        {
+            return currentStrafeDirection != StrafeDirection.None;
+        }
+
+
+        void StartRandomStrafe()
+        {
+            if (player == null) return;
+            if (IsInAttackAnimation()) return;
+            if (IsStrafing()) return;
+            if (strafeCooldownTimer > 0f) return;
+
+            float dist = GetDistanceToPlayer();
+
+            StrafeDirection sideDir = (Random.value < 0.5f)
+                ? StrafeDirection.Left
+                : StrafeDirection.Right;
+
+            if (dist <= stopDistanceFromPlayer)
+            {
+                currentStrafeDirection = StrafeDirection.Back;
+                queuedStrafeDirection = sideDir;
+
+                if (animator != null)
+                {
+                    animator.SetTrigger("StrafeBack");
+                }
+
+                strafeTimer = preStrafeBackDuration;
+                strafeCooldownTimer = preStrafeBackDuration + strafeDuration + strafeCooldown;
+            }
+            else
+            {
+                currentStrafeDirection = sideDir;
+                queuedStrafeDirection = StrafeDirection.None;
+
+                if (animator != null)
+                {
+                    if (sideDir == StrafeDirection.Left)
+                    {
+                        animator.SetTrigger("StrafeLeft");
+                    }
+                    else
+                    {
+                        animator.SetTrigger("StrafeRight");
+                    }
+                }
+
+                strafeTimer = strafeDuration;
+                strafeCooldownTimer = strafeDuration + strafeCooldown;
+            }
+        }
+
+
+        void UpdateStrafeTimers()
+        {
+            if (IsStrafing())
+            {
+                strafeTimer -= Time.deltaTime;
+
+                if (strafeTimer <= 0f)
+                {
+                    if (currentStrafeDirection == StrafeDirection.Back &&
+                        queuedStrafeDirection != StrafeDirection.None)
+                    {
+                        currentStrafeDirection = queuedStrafeDirection;
+                        queuedStrafeDirection = StrafeDirection.None;
+
+                        if (animator != null)
+                        {
+                            if (currentStrafeDirection == StrafeDirection.Left)
+                            {
+                                animator.SetTrigger("StrafeLeft");
+                            }
+                            else if (currentStrafeDirection == StrafeDirection.Right)
+                            {
+                                animator.SetTrigger("StrafeRight");
+                            }
+                        }
+
+                        strafeTimer = strafeDuration;
+                    }
+                    else
+                    {
+                        currentStrafeDirection = StrafeDirection.None;
+                        queuedStrafeDirection = StrafeDirection.None;
+                    }
+                }
+            }
+
+            if (strafeCooldownTimer > 0f)
+            {
+                strafeCooldownTimer -= Time.deltaTime;
+            }
+        }
+
+
         public float GetDistanceToPlayer()
         {
             if (player == null) return Mathf.Infinity;
@@ -467,12 +691,26 @@ namespace nightmareBW
             if (Random.value < 0.5f)
             {
                 animator.SetTrigger("BasicAttack");
+                StartCoroutine(MeleeHitRoutine(GetScaledDelay(basicMeleeHitDelay)));
             }
             else
             {
                 animator.SetTrigger("ClawAttack");
+                StartCoroutine(MeleeHitRoutine(GetScaledDelay(clawMeleeHitDelay)));
             }
         }
+
+
+        IEnumerator MeleeHitRoutine(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+
+            if (IsInAttackAnimation())
+            {
+                DoMeleeHit();
+            }
+        }
+
 
         public void PlayAoEAttack()
         {
@@ -480,6 +718,14 @@ namespace nightmareBW
             {
                 animator.SetTrigger("AoEAttack");
             }
+
+            StartCoroutine(AoEHitRoutine(GetScaledDelay(aoeHitDelay)));
+        }
+
+        IEnumerator AoEHitRoutine(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            DoAoEHit();
         }
 
         public void PlayDefensiveMove()
@@ -490,11 +736,20 @@ namespace nightmareBW
             }
         }
 
+        public float GetScaledDelay(float baseDelay)
+        {
+            float referenceSpeed = 3f;
+            return baseDelay * (referenceSpeed / speed);
+        }
+
+
 
         // Phase 1: basic melee focus
         public class Phase1State : DragonBossBaseState
         {
             float attackTimer;
+
+            const float meleeCooldown = 2.0f;
 
             public Phase1State(DragonBossController controller) : base(controller)
             {
@@ -505,7 +760,6 @@ namespace nightmareBW
                 base.Enter();
                 attackTimer = 0f;
                 controller.speed = 3f;
-                controller.stopDistanceFromPlayer = 5f;
                 controller.SetPhaseIndex(1);
                 controller.AttemptMakePathToPlayer();
 
@@ -517,13 +771,22 @@ namespace nightmareBW
 
                 float dist = controller.GetDistanceToPlayer();
 
-                if (dist > controller.stopDistanceFromPlayer)
+                if (controller.IsStrafing())
+                {
+                    controller.UpdatePathMovement();
+                }
+                else if (dist > controller.stopDistanceFromPlayer)
                 {
                     controller.UpdatePathMovement();
                 }
                 else
                 {
                     controller.StopMovement();
+
+                    if (Random.value < 0.25f)
+                    {
+                        controller.StartRandomStrafe();
+                    }
                 }
 
                 controller.FacePlayer();
@@ -531,15 +794,18 @@ namespace nightmareBW
                 if (controller.IsInAttackAnimation())
                     return;
 
+                float meleeZone = controller.meleeRange;
+
                 attackTimer -= Time.deltaTime;
 
-                if (attackTimer <= 0f && dist <= controller.meleeRange)
+                if (attackTimer <= 0f && dist <= meleeZone)
                 {
                     controller.StopMovement();
                     controller.PlayMeleeAttack();
-                    attackTimer = 2f;
+                    attackTimer = meleeCooldown;
                 }
             }
+
 
         }
 
@@ -561,8 +827,6 @@ namespace nightmareBW
                 base.Enter();
                 attackTimer = 0f;
                 controller.speed = 4f;
-
-                controller.stopDistanceFromPlayer = controller.meleeRange + 0.5f;
                 controller.SetPhaseIndex(2);
                 controller.AttemptMakePathToPlayer();
             }
@@ -573,13 +837,22 @@ namespace nightmareBW
 
                 float dist = controller.GetDistanceToPlayer();
 
-                if (dist > controller.stopDistanceFromPlayer)
+                if (controller.IsStrafing())
+                {
+                    controller.UpdatePathMovement();
+                }
+                else if (dist > controller.stopDistanceFromPlayer)
                 {
                     controller.UpdatePathMovement();
                 }
                 else
                 {
                     controller.StopMovement();
+
+                    if (Random.value < 0.35f)
+                    {
+                        controller.StartRandomStrafe();
+                    }
                 }
 
                 controller.FacePlayer();
@@ -590,10 +863,11 @@ namespace nightmareBW
                 attackTimer -= Time.deltaTime;
                 if (attackTimer > 0f) return;
 
-                const float meleeBuffer = 0.75f;
-                bool inMeleeZone = dist <= controller.meleeRange + meleeBuffer;
+                float meleeZone = controller.meleeRange;
+                float aoeZoneStart = controller.meleeRange + 1.5f;
+                float aoeZoneEnd = controller.preferredRange;
 
-                if (inMeleeZone)
+                if (dist <= meleeZone)
                 {
                     float roll = Random.value;
 
@@ -610,15 +884,22 @@ namespace nightmareBW
                         attackTimer = aoeCooldown;
                     }
                 }
+                else if (dist >= aoeZoneStart && dist <= aoeZoneEnd)
+                {
+                    controller.StopMovement();
+                    controller.PlayAoEAttack();
+                    attackTimer = aoeCooldown;
+                }
                 else
                 {
                     attackTimer = 0.25f;
                 }
-             }
+            }
+
         }
 
 
-        // Phase 3: enraged, uses melee, AoE, and ranged when you are far
+        // Phase 3: enraged, uses melee up close and ranged when far enough away
         public class Phase3State : DragonBossBaseState
         {
             float attackTimer;
@@ -636,10 +917,7 @@ namespace nightmareBW
                 base.Enter();
                 attackTimer = 0f;
 
-                controller.speed = 7f;
-
-                controller.stopDistanceFromPlayer = controller.meleeRange + 1.5f;
-
+                controller.speed = 6f;
                 controller.SetPhaseIndex(3);
                 controller.AttemptMakePathToPlayer();
             }
@@ -650,13 +928,22 @@ namespace nightmareBW
 
                 float dist = controller.GetDistanceToPlayer();
 
-                if (dist > controller.stopDistanceFromPlayer)
+                if (controller.IsStrafing())
+                {
+                    controller.UpdatePathMovement();
+                }
+                else if (dist > controller.stopDistanceFromPlayer)
                 {
                     controller.UpdatePathMovement();
                 }
                 else
                 {
                     controller.StopMovement();
+
+                    if (Random.value < 0.5f)
+                    {
+                        controller.StartRandomStrafe();
+                    }
                 }
 
                 controller.FacePlayer();
@@ -667,15 +954,14 @@ namespace nightmareBW
                 attackTimer -= Time.deltaTime;
                 if (attackTimer > 0f) return;
 
-                const float meleeBuffer = 0.75f;
-                bool inMeleeZone = dist <= controller.meleeRange + meleeBuffer;
-
-                float rangedMinDistance = controller.meleeRange + 2.5f;
+                float meleeZone = controller.meleeRange;
+                float rangedZoneMin = controller.meleeRange + 3f;
+                float rangedZoneMax = controller.preferredRange;
 
                 DragonRangedAttack ranged = controller.GetRangedAttack();
                 bool canRanged = (ranged != null && ranged.CanUse());
 
-                if (inMeleeZone)
+                if (dist <= meleeZone)
                 {
                     float roll = Random.value;
 
@@ -692,13 +978,25 @@ namespace nightmareBW
                         attackTimer = aoeCooldown;
                     }
                 }
-                else if (dist >= rangedMinDistance && canRanged)
+                else if (dist >= rangedZoneMin && dist <= rangedZoneMax && canRanged)
                 {
                     controller.StopMovement();
                     controller.FacePlayer();
                     ranged.StartRangedAttack();
-
                     attackTimer = thinkDelay;
+                }
+                else if (dist >= rangedZoneMin && dist <= rangedZoneMax)
+                {
+                    if (Random.value < 0.4f)
+                    {
+                        controller.StopMovement();
+                        controller.PlayAoEAttack();
+                        attackTimer = aoeCooldown;
+                    }
+                    else
+                    {
+                        attackTimer = thinkDelay;
+                    }
                 }
                 else
                 {
@@ -706,8 +1004,6 @@ namespace nightmareBW
                 }
             }
         }
-
-
 
         // Defensive state: punish/guard when player stays close or deals heavy damage
         public class DefensiveState : DragonBossBaseState

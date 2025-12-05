@@ -107,9 +107,12 @@ GameObject:
   - component: {fileID: 6186110879559390404}
   - component: {fileID: 1311758315922035289}
   - component: {fileID: 2138471833133883528}
-  - component: {fileID: 7526169272650114078}
   - component: {fileID: 655441022622790248}
-  m_Layer: 0
+  - component: {fileID: 871199890347550522}
+  - component: {fileID: 1628742975853220296}
+  - component: {fileID: 4810624154960316906}
+  - component: {fileID: 8194880713905195178}
+  m_Layer: 7
   m_Name: Nightmare
   m_TagString: Boss
   m_Icon: {fileID: 0}
@@ -124,7 +127,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1363138232190811531}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.9986168, z: -0, w: -0.052579023}
+  m_LocalRotation: {x: 0, y: 0.99861676, z: -0, w: -0.05257994}
   m_LocalPosition: {x: 5.18, y: 0.0000009536743, z: 17.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -132,6 +135,9 @@ Transform:
   - {fileID: 5553259996323195507}
   - {fileID: 2750210385677470189}
   - {fileID: 3100844791282201049}
+  - {fileID: 2494734752257648271}
+  - {fileID: 7326432163857658584}
+  - {fileID: 6495937844956363447}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 186.028, z: 0}
 --- !u!54 &6186110879559390404
@@ -205,37 +211,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &7526169272650114078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1363138232190811531}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ac4ecc2e33d4e94c80cf8df4945b2a8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 1311758315922035289}
-  rangedAttack: {fileID: 655441022622790248}
-  bossHealthBar: {fileID: 0}
-  moveSpeedParam: Speed
-  speed: 5
-  nodeReachDistance: 3
-  pathRebuildInterval: 1
-  rotationSpeed: 3
-  maxHealth: 100
-  currentHealth: 100
-  phase2Threshold: 0.66
-  phase3Threshold: 0.33
-  stopDistanceFromPlayer: 5
-  meleeRange: 5
-  preferredRange: 8
-  punishDistance: 1.5
-  punishCloseTime: 2
-  defensiveDuration: 2
-  heavyHitThreshold: 25
 --- !u!114 &655441022622790248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,12 +224,143 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1311758315922035289}
-  firePoint: {fileID: 0}
-  fireballPrefab: {fileID: 0}
+  firePoint: {fileID: 3100844791282201049}
+  fireballPrefab: {fileID: 8995761190510377705, guid: 0df11fad0fd4a3946bcfa27782bc5321, type: 3}
   cooldown: 4
   castRange: 20
   spawnDelay: 0.6
   endDelay: 1.2
+--- !u!114 &871199890347550522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363138232190811531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64fdcbcaa446caf4ea86f16b77c20dde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1311758315922035289}
+  moveSpeedParam: Speed
+  stopDistanceFromPlayer: 5
+  preferredRange: 10
+  nodeReachDistance: 3
+  pathRebuildInterval: 1
+  rotationSpeed: 5
+  speed: 3
+  strafeSpeedMultiplier: 0.6
+  backoffSpeedMultiplier: 0.6
+  backoffDuration: 0.7
+  strafeDuration: 1
+  strafeCooldown: 1.5
+  autoEvasive: 1
+  evasiveChance: 0.3
+--- !u!114 &1628742975853220296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363138232190811531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acccf85f39846164eb9630aaa6612826, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1311758315922035289}
+  movement: {fileID: 871199890347550522}
+  rangedAttack: {fileID: 655441022622790248}
+  meleePoint: {fileID: 2494734752257648271}
+  meleeRadius: 2
+  meleeDamage: 1
+  meleeKnockback: 2
+  basicMeleeHitDelay: 0.8
+  clawMeleeHitDelay: 1.65
+  meleePostAttackLock: 0.2
+  meleeCooldown: 2
+  aoePoint: {fileID: 7326432163857658584}
+  aoeRadius: 5
+  aoeDamage: 2
+  aoeKnockback: 3
+  aoeHitDelay: 0.6
+  aoePostAttackLock: 0.25
+  aoeCooldown: 3
+  rangedPostAttackLock: 0.2
+  rangedCooldown: 2.5
+  referenceMoveSpeed: 3
+--- !u!114 &4810624154960316906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363138232190811531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62089466e9661844aa02b827f033bbd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1311758315922035289}
+  movement: {fileID: 871199890347550522}
+  attack: {fileID: 1628742975853220296}
+  rangedAttack: {fileID: 655441022622790248}
+  bossHealthBar: {fileID: 0}
+  maxHealth: 100
+  currentHealth: 100
+  phase2Threshold: 0.66
+  phase3Threshold: 0.33
+  meleeRange: 5
+  phase1MoveSpeed: 3
+  phase2MoveSpeed: 4
+  phase3MoveSpeed: 6
+  enablePunish: 1
+  punishDistance: 1.5
+  punishCloseTime: 2
+--- !u!114 &8194880713905195178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363138232190811531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb936639cdd91de4b9956f37ee2ea8e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 0
+  iTime: 0.5
+  flashMaterial: {fileID: 0}
+  renderers: []
+  damageEffectPrefab: {fileID: 0}
+  hurtSounds: {fileID: 0}
+  deathSounds: {fileID: 0}
+  OnInitialize:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4810624154960316906}
+        m_TargetAssemblyTypeName: nightmareBW.DragonBossBrain, Assembly-CSharp
+        m_MethodName: HandleHit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1634632649492671548
 GameObject:
   m_ObjectHideFlags: 0
@@ -1172,6 +1278,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 480532939365423864}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5195345401121201051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7326432163857658584}
+  m_Layer: 0
+  m_Name: AoePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7326432163857658584
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5195345401121201051}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: 1.91, z: 0.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 480532939365423864}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5344558266612007659
 GameObject:
   m_ObjectHideFlags: 0
@@ -1204,6 +1341,59 @@ Transform:
   - {fileID: 8861639030110445297}
   m_Father: {fileID: 2169386188093171862}
   m_LocalEulerAnglesHint: {x: -1.6177123, y: -4.8712063, z: -17.786419}
+--- !u!1 &5382387566596695826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6495937844956363447}
+  - component: {fileID: 5326669733194780414}
+  m_Layer: 7
+  m_Name: HitBox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6495937844956363447
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5382387566596695826}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 480532939365423864}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5326669733194780414
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5382387566596695826}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.724908, y: 4.474449, z: 4.773488}
+  m_Center: {x: 0.07069421, y: 1.7372246, z: -0.2783265}
 --- !u!1 &5558473443155495604
 GameObject:
   m_ObjectHideFlags: 0
@@ -2206,6 +2396,37 @@ Transform:
   - {fileID: 3314166552141816192}
   m_Father: {fileID: 1199256007424091576}
   m_LocalEulerAnglesHint: {x: 1.2499039, y: -1.6141158, z: 8.208178}
+--- !u!1 &8386865168043540067
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2494734752257648271}
+  m_Layer: 0
+  m_Name: MeleePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2494734752257648271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8386865168043540067}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.03, y: 2.54, z: 4.73}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 480532939365423864}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8475716533244166362
 GameObject:
   m_ObjectHideFlags: 0

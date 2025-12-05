@@ -11,7 +11,7 @@ namespace nightmareBW
         public GameObject fireballPrefab;
 
         [Header("Ranged Settings")]
-        public float cooldown = 4f;
+        public float cooldown = 3f;
         public float castRange = 20f;
 
         public float spawnDelay = 0.6f;
@@ -20,6 +20,8 @@ namespace nightmareBW
         Transform player;
         bool isOnCooldown;
         bool isAttacking;
+
+        public bool IsAttacking => isAttacking;
 
         void Awake()
         {
@@ -64,7 +66,6 @@ namespace nightmareBW
 
         IEnumerator RangedRoutine()
         {
-
             yield return new WaitForSeconds(spawnDelay);
 
             SpawnFireball();
@@ -72,7 +73,6 @@ namespace nightmareBW
             yield return new WaitForSeconds(endDelay);
 
             isAttacking = false;
-
             StartCoroutine(CooldownRoutine());
         }
 
