@@ -38,8 +38,8 @@ namespace nightmareBW
         public Bar bossHealthBar;
 
         [Header("Health")]
-        public float maxHealth = 100f;
-        public float currentHealth = 100f;
+        public float maxHealth = 25f;
+        public float currentHealth = 25f;
         [Range(0f, 1f)] public float phase2Threshold = 0.66f;
         [Range(0f, 1f)] public float phase3Threshold = 0.33f;
 
@@ -51,10 +51,11 @@ namespace nightmareBW
         public float phase2MoveSpeed = 4f;
         public float phase3MoveSpeed = 6f;
 
-        [Header("Punish / Defensive (optional)")]
+        [Header("Punish/Defensive")]
         public bool enablePunish = true;
         public float punishDistance = 1.5f;
         public float punishCloseTime = 2f;
+        public bool isBlocking = false;
 
         [Header("Events")]
         public UnityEvent OnDeath;
@@ -82,7 +83,7 @@ namespace nightmareBW
             if (bossHealthBar != null)
             {
                 bossHealthBar.SetMax((int)maxHealth);
-                bossHealthBar.UpdateBar(0, (int)currentHealth);
+                bossHealthBar.UpdateBar((int)currentHealth, (int)maxHealth);
             }
         }
 
@@ -105,7 +106,7 @@ namespace nightmareBW
         void UpdatePunishTimer()
         {
             if (!enablePunish) return;
-            if (movement == null) return;
+            if (movement == null || attack == null) return;
 
             float dist = movement.GetDistanceToPlayer();
             if (dist < punishDistance)
@@ -113,10 +114,17 @@ namespace nightmareBW
                 closeTimer += Time.deltaTime;
                 if (closeTimer >= punishCloseTime)
                 {
-                    if (attack != null)
+                    float roll = Random.value;
+
+                    if (roll < 0.5f && attack.CanDefend())
+                    {
+                        attack.TryDefend();
+                    }
+                    else if (attack.CanAoE())
                     {
                         attack.TryAoEAttack();
                     }
+
                     closeTimer = 0f;
                 }
             }
@@ -184,6 +192,12 @@ namespace nightmareBW
 
         public void TakeDamage(float amount)
         {
+
+            if (isBlocking)
+            {
+                return;
+            }
+
             if (amount <= 0f) return;
 
             currentHealth -= amount;
@@ -191,7 +205,7 @@ namespace nightmareBW
 
             if (bossHealthBar != null)
             {
-                bossHealthBar.UpdateBar(0, (int)currentHealth);
+                bossHealthBar.UpdateBar((int)currentHealth, (int)maxHealth);
             }
 
             if (currentHealth <= 0f)

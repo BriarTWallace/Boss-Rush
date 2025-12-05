@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3942237352855290466}
   - component: {fileID: 1641603747534133305}
   - component: {fileID: 8850432206815472161}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: DragonFireball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &4914538694163724473
 ParticleSystem:

@@ -9,6 +9,7 @@ namespace nightmareBW
         public Animator animator;
         public DragonBossMovement movement;
         public DragonRangedAttack rangedAttack;
+        public DragonBossBrain brain;
 
         [Header("Melee Settings")]
         public Transform meleePoint;
@@ -19,6 +20,10 @@ namespace nightmareBW
         public float clawMeleeHitDelay = 1.65f;
         public float meleePostAttackLock = 0.2f;
         public float meleeCooldown = 2f;
+
+        [Header("Defend Settings")]
+        public float defendDuration = 1f;
+        public float defendCooldown = 4f;
 
         [Header("AoE Settings")]
         public Transform aoePoint;
@@ -43,6 +48,8 @@ namespace nightmareBW
         float nextMeleeTime;
         float nextAoETime;
         float nextRangedTime;
+        float nextDefendTime;
+
 
         public bool IsAttacking { get; private set; }
 
@@ -58,6 +65,9 @@ namespace nightmareBW
 
             if (rangedAttack == null)
                 rangedAttack = GetComponent<DragonRangedAttack>();
+
+            if (brain == null)
+                brain = GetComponent<DragonBossBrain>();
         }
 
         public void SetPhase(int phaseIndex)
@@ -248,6 +258,45 @@ namespace nightmareBW
                 break;
             }
         }
+
+        public bool CanDefend()
+        {
+            return Time.time >= nextDefendTime && !IsAttacking;
+        }
+
+        public void TryDefend()
+        {
+            if (!CanDefend()) return;
+            StartCoroutine(DefendRoutine());
+        }
+
+        IEnumerator DefendRoutine()
+        {
+            IsAttacking = true;
+
+            if (movement != null)
+                movement.LockMovement(true);
+
+            if (brain != null)
+                brain.isBlocking = true;
+
+            if (animator != null)
+                animator.SetTrigger("Defend");
+
+            yield return new WaitForSeconds(defendDuration);
+
+            if (brain != null)
+                brain.isBlocking = false;
+
+            if (movement != null)
+                movement.LockMovement(false);
+
+            IsAttacking = false;
+            nextDefendTime = Time.time + defendCooldown;
+        }
+
+
+
 
         void OnDrawGizmosSelected()
         {
